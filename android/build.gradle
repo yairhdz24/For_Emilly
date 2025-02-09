@@ -2,36 +2,61 @@
 
 buildscript {
     ext {
-        buildToolsVersion = findProperty('android.buildToolsVersion') ?: '35.0.0'
-        minSdkVersion = Integer.parseInt(findProperty('android.minSdkVersion') ?: '24')
-        compileSdkVersion = Integer.parseInt(findProperty('android.compileSdkVersion') ?: '35')
-        targetSdkVersion = Integer.parseInt(findProperty('android.targetSdkVersion') ?: '34')
-        kotlinVersion = findProperty('android.kotlinVersion') ?: '1.9.25'
+        // Toma las propiedades de gradle.properties o usa valores por defecto
+        buildToolsVersion    = findProperty('android.buildToolsVersion')      ?: '35.0.0'
+        minSdkVersion        = Integer.parseInt(findProperty('android.minSdkVersion')       ?: '24')
+        compileSdkVersion    = Integer.parseInt(findProperty('android.compileSdkVersion')   ?: '35')
+        targetSdkVersion     = Integer.parseInt(findProperty('android.targetSdkVersion')    ?: '34')
 
-        ndkVersion = "26.1.10909125"
+        // Versión de Kotlin (la que Compose 1.5.15 requiere)
+        kotlinVersion        = findProperty('android.kotlinVersion')         ?: '1.9.25'
+
+        // Versión del plugin de Gradle (ajusta si Compose/React Native requieren otra)
+        gradlePluginVersion  = findProperty('android.gradlePluginVersion')   ?: '8.1.1'
+
+        ndkVersion           = "26.1.10909125"
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath('com.android.tools.build:gradle')
-        classpath('com.facebook.react:react-native-gradle-plugin')
-        classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')
+        // Plugin oficial de Android con la versión que definas
+        classpath("com.android.tools.build:gradle:$gradlePluginVersion")
+
+        // Plugin de React Native
+        classpath("com.facebook.react:react-native-gradle-plugin")
+
+        // Plugin de Kotlin con la versión declarada
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
+// Necesario para la configuración del root project en RN 0.76+
+// (Si tu proyecto es RN eyectado, a menudo se incluye así)
 apply plugin: "com.facebook.react.rootproject"
 
 allprojects {
     repositories {
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url(new File(['node', '--print', "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim(), '../android'))
+            url(new File(
+                ['node', '--print', "require.resolve('react-native/package.json')"]
+                    .execute(null, rootDir)
+                    .text
+                    .trim(),
+                '../android'
+            ))
         }
         maven {
             // Android JSC is installed from npm
-            url(new File(['node', '--print', "require.resolve('jsc-android/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim(), '../dist'))
+            url(new File(
+                ['node', '--print', "require.resolve('jsc-android/package.json', { paths: [require.resolve('react-native/package.json')] })"]
+                    .execute(null, rootDir)
+                    .text
+                    .trim(),
+                '../dist'
+            ))
         }
 
         google()
