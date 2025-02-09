@@ -28,11 +28,11 @@ const WelcomeScreen = ({ navigation }) => {
   })
 
   const messages = [
-    "❤️ Cada día que pasa, te amo más y más.",
-    "🌟 Eres la luz que ilumina mi vida.",
-    "🌹 Tu amor es el regalo más precioso que tengo.",
-    "🎵 Nuestro amor es la melodía más hermosa.",
-    "🌈 Contigo, cada día es una nueva aventura llena de color.",
+    "❤️ Jdrr cada dia me enamoro mas de ti x dios.💖",
+    "🌟 Eres lo mas fking lindo que me a pasado, Te amo😍✨.",
+    "🌹 El destino nos guardo el uno al otro mi amor💖.",
+    "🎵 Nuestro amor es la conexion mas linda.✨",
+    "💫 Quiero compartir cada instante de mi vida a tu lado 💕",
   ]
 
   useEffect(() => {
@@ -73,7 +73,7 @@ const WelcomeScreen = ({ navigation }) => {
 
         await Notifications.scheduleNotificationAsync({
           content: {
-            title: "Mensaje de amor diario 💖",
+            title: "Te amo mi preciosa!💖",
             body: message,
           },
           trigger,
@@ -82,7 +82,7 @@ const WelcomeScreen = ({ navigation }) => {
 
       // Notificación de prueba a las 3:40 AM
       const testTrigger = new Date()
-      testTrigger.setHours(3, 46, 0, 0)
+      testTrigger.setHours(3, 50, 0, 0)
       if (testTrigger <= new Date()) {
         testTrigger.setDate(testTrigger.getDate() + 1)
       }
@@ -90,7 +90,7 @@ const WelcomeScreen = ({ navigation }) => {
       await Notifications.scheduleNotificationAsync({
         content: {
           title: "Te amo mi amooor",
-          body: "TE AMOOO MI BEBE HERMOSAA",
+          body: "🎵 Nuestro amor es la conexion mas linda.",
         },
         trigger: testTrigger,
       })

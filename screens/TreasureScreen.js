@@ -1,29 +1,38 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, Animated, Dimensions } from "react-native"
-import LottieView from "lottie-react-native"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  Dimensions,
+  Image,
+} from "react-native";
+import LottieView from "lottie-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width } = Dimensions.get("window")
+const { width } = Dimensions.get("window");
 
 const TreasureScreen = ({ navigation }) => {
-  const [hasKey, setHasKey] = useState(false)
-  const [isShaking, setIsShaking] = useState(false)
-  const shakeAnimation = new Animated.Value(0)
+  const [hasKey, setHasKey] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
+  const shakeAnimation = new Animated.Value(0);
 
   useEffect(() => {
-    checkKey()
-  }, [])
+    checkKey();
+  }, []);
 
   const checkKey = async () => {
-    const key = await AsyncStorage.getItem("hasKey")
-    setHasKey(key === "true")
-  }
+    const key = await AsyncStorage.getItem("hasKey");
+    setHasKey(key === "true");
+  };
 
   const handleChestPress = () => {
     if (!hasKey) {
-      setIsShaking(true)
+      // Si no tienes la llave, se muestra una animación de "temblor" y se muestra un mensaje de ayuda.
+      setIsShaking(true);
       Animated.sequence([
         Animated.timing(shakeAnimation, {
           toValue: 10,
@@ -40,17 +49,20 @@ const TreasureScreen = ({ navigation }) => {
           duration: 100,
           useNativeDriver: true,
         }),
-      ]).start(() => setIsShaking(false))
+      ]).start(() => setIsShaking(false));
     } else {
-      navigation.navigate("Gift")
+      // Si tienes la llave, navega a GiftScreen
+      navigation.navigate("Gift");
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>¡Has encontrado el tesoro!</Text>
+      <Text style={styles.title}>¡Has encontrado tu regalo especial!</Text>
       <Text style={styles.subtitle}>
-        {hasKey ? "¡Usa tu llave para abrirlo!" : "Necesitas encontrar la llave secreta..."}
+        {hasKey
+          ? "¡Usa tu llave para abrirlo y descubrir la sorpresa!"
+          : "Aún no tienes la llave, pero no te preocupes, el pendejito de tu novio la escondio muy bien, el te ayudara..."}
       </Text>
 
       <Animated.View
@@ -71,10 +83,14 @@ const TreasureScreen = ({ navigation }) => {
         </TouchableOpacity>
       </Animated.View>
 
-      {!hasKey && <Text style={styles.hint}>Pista: La llave está escondida en el código de programación...</Text>}
+      {!hasKey && (
+        <Text style={styles.hint}>
+          Pista: La llave está oculta en el código...💀💀
+        </Text>
+      )}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -82,6 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#1a1a1a",
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 28,
@@ -111,9 +128,8 @@ const styles = StyleSheet.create({
     color: "#FFD700",
     marginTop: 30,
     textAlign: "center",
-    opacity: 0.7,
+    opacity: 0.8,
   },
-})
+});
 
-export default TreasureScreen
-
+export default TreasureScreen;

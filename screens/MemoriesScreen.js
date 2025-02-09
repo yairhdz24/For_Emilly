@@ -33,6 +33,21 @@ const memories = [
     image: require("../assets/images/cita.jpg"),
     text: "💑🌙 Nuestro aniversario especial.",
   },
+  {
+    id: "4",
+    image: require("../assets/images/primera_vez.jpg"),
+    text: "😵‍💫Nuestra primera vez😵‍💫💘.",
+  },
+  {
+    id: "5",
+    image: require("../assets/images/corazon.jpg"),
+    text: "<3.",
+  },
+  {
+    id: "6",
+    image: require("../assets/images/ddeada.jpg"),
+    text: "La primera ddeada x dios.😵‍💫💘",
+  },
 ];
 
 const MemoriesScreen = ({ navigation }) => {
