@@ -2,26 +2,28 @@
 
 buildscript {
     ext {
-        // Toma las propiedades de gradle.properties o usa valores por defecto
+        // Si en gradle.properties no hay valores, toma estos por defecto:
         buildToolsVersion    = findProperty('android.buildToolsVersion')      ?: '35.0.0'
         minSdkVersion        = Integer.parseInt(findProperty('android.minSdkVersion')       ?: '24')
         compileSdkVersion    = Integer.parseInt(findProperty('android.compileSdkVersion')   ?: '35')
         targetSdkVersion     = Integer.parseInt(findProperty('android.targetSdkVersion')    ?: '34')
 
-        // Versión de Kotlin (la que Compose 1.5.15 requiere)
+        // La versión de Kotlin que Compose 1.5.15 requiere
         kotlinVersion        = findProperty('android.kotlinVersion')         ?: '1.9.25'
 
-        // Versión del plugin de Gradle (ajusta si Compose/React Native requieren otra)
+        // Versión del plugin de Gradle (compatible con Compose actual)
         gradlePluginVersion  = findProperty('android.gradlePluginVersion')   ?: '8.1.1'
 
+        // Versión del NDK si la necesitas
         ndkVersion           = "26.1.10909125"
     }
+
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        // Plugin oficial de Android con la versión que definas
+        // Plugin oficial de Android con la versión que definimos arriba
         classpath("com.android.tools.build:gradle:$gradlePluginVersion")
 
         // Plugin de React Native
@@ -32,14 +34,13 @@ buildscript {
     }
 }
 
-// Necesario para la configuración del root project en RN 0.76+
-// (Si tu proyecto es RN eyectado, a menudo se incluye así)
+// Necesario para la configuración del root project en RN 0.76+ (bare / eyectado)
 apply plugin: "com.facebook.react.rootproject"
 
 allprojects {
     repositories {
         maven {
-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            // Instala React Native (JS, Obj-C, binarios de Android) desde npm
             url(new File(
                 ['node', '--print', "require.resolve('react-native/package.json')"]
                     .execute(null, rootDir)
@@ -49,7 +50,7 @@ allprojects {
             ))
         }
         maven {
-            // Android JSC is installed from npm
+            // Android JSC se instala desde npm
             url(new File(
                 ['node', '--print', "require.resolve('jsc-android/package.json', { paths: [require.resolve('react-native/package.json')] })"]
                     .execute(null, rootDir)
