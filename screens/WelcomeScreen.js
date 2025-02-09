@@ -5,8 +5,18 @@ import { View, Text, StyleSheet, Animated, TouchableOpacity, Dimensions } from "
 import LottieView from "lottie-react-native"
 import { useFonts } from "expo-font"
 import { Audio } from "expo-av"
+import * as Notifications from "expo-notifications"
 
 const { width, height } = Dimensions.get("window")
+
+// Configurar el manejador de notificaciones
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+})
 
 const WelcomeScreen = ({ navigation }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current
@@ -16,6 +26,14 @@ const WelcomeScreen = ({ navigation }) => {
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
   })
+
+  const messages = [
+    "❤️ Cada día que pasa, te amo más y más.",
+    "🌟 Eres la luz que ilumina mi vida.",
+    "🌹 Tu amor es el regalo más precioso que tengo.",
+    "🎵 Nuestro amor es la melodía más hermosa.",
+    "🌈 Contigo, cada día es una nueva aventura llena de color.",
+  ]
 
   useEffect(() => {
     Animated.parallel([
@@ -31,29 +49,73 @@ const WelcomeScreen = ({ navigation }) => {
         useNativeDriver: true,
       }),
     ]).start()
+
+    scheduleNotifications()
   }, [fadeAnim, scaleAnim])
+
+  const scheduleNotifications = async () => {
+    try {
+      const { status } = await Notifications.requestPermissionsAsync()
+      if (status !== "granted") {
+        console.log("Permiso de notificación no otorgado")
+        return
+      }
+
+      // Cancelar todas las notificaciones programadas anteriormente
+      await Notifications.cancelAllScheduledNotificationsAsync()
+
+      // Programar notificaciones diarias a las 9 AM
+      for (let i = 0; i < 45; i++) {
+        const message = messages[i % messages.length]
+        const trigger = new Date()
+        trigger.setDate(trigger.getDate() + i)
+        trigger.setHours(9, 0, 0, 0)
+
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Mensaje de amor diario 💖",
+            body: message,
+          },
+          trigger,
+        })
+      }
+
+      // Notificación de prueba a las 3:40 AM
+      const testTrigger = new Date()
+      testTrigger.setHours(3, 46, 0, 0)
+      if (testTrigger <= new Date()) {
+        testTrigger.setDate(testTrigger.getDate() + 1)
+      }
+
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Te amo mi amooor",
+          body: "TE AMOOO MI BEBE HERMOSAA",
+        },
+        trigger: testTrigger,
+      })
+
+      console.log("Notificaciones programadas con éxito")
+    } catch (error) {
+      console.error("Error al programar notificaciones:", error)
+    }
+  }
 
   if (!fontsLoaded) {
     return null
   }
 
-  // Función que se ejecuta al presionar el botón
   const handlePress = async () => {
     try {
-      // Crea el objeto de sonido y reprodúcelo
-      const { sound } = await Audio.Sound.createAsync(
-        require("../assets/sounds/piuw.mp3")
-      )
+      const { sound } = await Audio.Sound.createAsync(require("../assets/sounds/piuw.mp3"))
       await sound.playAsync()
 
-      // Opcional: descarga el recurso después de 1 segundo (ajusta según la duración del sonido)
       setTimeout(() => {
         sound.unloadAsync()
       }, 1000)
     } catch (error) {
       console.log("Error al reproducir el sonido:", error)
     }
-    // Navega a la pantalla "Story" después de reproducir el sonido
     navigation.navigate("Story")
   }
 
@@ -77,7 +139,6 @@ const WelcomeScreen = ({ navigation }) => {
         />
         <Text style={styles.title}>Hola, mi amor</Text>
         <Text style={styles.subtitle}>Bienvenida a un viaje muy especial...</Text>
-        {/* Botón que reproduce el sonido al presionarlo y luego navega */}
         <TouchableOpacity style={styles.button} onPress={handlePress}>
           <Text style={styles.buttonText}>Comenzar</Text>
         </TouchableOpacity>
@@ -118,7 +179,9 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     color: "#FF1493",
     marginBottom: 10,
-    textShadow: "0px 0px 10px rgba(255,20,147,0.5)",
+    textShadowColor: "rgba(255,20,147,0.5)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 10,
     zIndex: 1000,
   },
   subtitle: {
@@ -156,3 +219,4 @@ const styles = StyleSheet.create({
 })
 
 export default WelcomeScreen
+

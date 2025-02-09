@@ -95,7 +95,7 @@ const MemoriesScreen = ({ navigation }) => {
       }
       // Crea y reproduce el sonido de transición
       const { sound } = await Audio.Sound.createAsync(
-        require("../assets/sounds/transition.mp3") // Asegúrate de tener este archivo
+        require("../assets/sounds/piuw.mp3") // Asegúrate de tener este archivo
       );
       await sound.playAsync();
       // Espera 500ms (o ajusta el tiempo según la duración deseada)

@@ -104,9 +104,9 @@ const StoryScreen = ({ navigation }) => {
 
         <Text style={styles.text}>
           Durante 5 noches sin dormir, mi mente no dejó de imaginar. 
-          Cada línea de código, cada detalle, fue pensado exclusivamente para ti. 
+          Cada línea de código, fue pensado exclusivamente para ti. 
           No es solo una aplicación, es un pedazo de mi corazón convertido en algo único, 
-          algo que no existe en ningún otro lugar del mundo… 
+          algo que no existe en ningún otro lado, ni de pdo… 
           porque nació de mi amor por ti &lt;3.
         </Text>
 
