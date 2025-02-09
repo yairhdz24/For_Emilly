@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,33 +13,100 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { Audio } from "expo-av";
 
 const { width, height } = Dimensions.get("window");
 
 const memories = [
-  { id: "1", image: require("../assets/images/concierto.jpg"), text: "🎶✨ Nuestro primer concierto juntos." },
-  { id: "2", image: require("../assets/images/fav.jpg"), text: "💫 Una cena inolvidable. (Nosotros)" },
-  { id: "3", image: require("../assets/images/cita.jpg"), text: "💑🌙 Nuestro aniversario especial." },
+  {
+    id: "1",
+    image: require("../assets/images/concierto.jpg"),
+    text: "🎶✨ Nuestro primer concierto juntos.",
+  },
+  {
+    id: "2",
+    image: require("../assets/images/fav.jpg"),
+    text: "💫 Una cena inolvidable. (Nosotros)",
+  },
+  {
+    id: "3",
+    image: require("../assets/images/cita.jpg"),
+    text: "💑🌙 Nuestro aniversario especial.",
+  },
 ];
 
 const MemoriesScreen = ({ navigation }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const [activeIndex, setActiveIndex] = useState(0);
+  // Ref para almacenar la referencia del audio de la pantalla
+  const audioRef = useRef(null);
 
   useEffect(() => {
     const listener = scrollX.addListener(({ value }) => {
       setActiveIndex(Math.round(value / width));
     });
     return () => scrollX.removeListener(listener);
+  }, [scrollX]);
+
+  // Efecto para reproducir el audio (NO en bucle) al montar la pantalla
+  useEffect(() => {
+    async function playAudio() {
+      try {
+        const { sound } = await Audio.Sound.createAsync(
+          require("../assets/sounds/Cinema.mp3"), // Reemplaza por tu audio de fondo
+          { shouldPlay: true, isLooping: false }
+        );
+        audioRef.current = sound;
+        await sound.playAsync();
+      } catch (error) {
+        console.log("Error al reproducir el audio:", error);
+      }
+    }
+    playAudio();
+
+    // Cleanup: detener y descargar el audio al abandonar la pantalla
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.stopAsync();
+        audioRef.current.unloadAsync();
+        audioRef.current = null;
+      }
+    };
   }, []);
 
-  const renderItem = ({ item, index }) => {
+  const renderItem = ({ item }) => {
     return (
       <View style={styles.itemContainer}>
         <Image source={item.image} style={styles.image} />
         <Text style={styles.text}>{item.text}</Text>
       </View>
     );
+  };
+
+  // Función que se ejecuta al presionar el botón:
+  // Detiene el audio actual, reproduce el sonido de transición y luego navega.
+  const handleButtonPress = async () => {
+    try {
+      // Si hay audio reproduciéndose, deténlo y descárgalo
+      if (audioRef.current) {
+        await audioRef.current.stopAsync();
+        await audioRef.current.unloadAsync();
+        audioRef.current = null;
+      }
+      // Crea y reproduce el sonido de transición
+      const { sound } = await Audio.Sound.createAsync(
+        require("../assets/sounds/transition.mp3") // Asegúrate de tener este archivo
+      );
+      await sound.playAsync();
+      // Espera 500ms (o ajusta el tiempo según la duración deseada)
+      setTimeout(() => {
+        sound.unloadAsync();
+        navigation.navigate("Countdown");
+      }, 500);
+    } catch (error) {
+      console.log("Error al reproducir el sonido de transición:", error);
+      navigation.navigate("Countdown");
+    }
   };
 
   return (
@@ -69,12 +136,18 @@ const MemoriesScreen = ({ navigation }) => {
       {/* Paginación */}
       <View style={styles.pagination}>
         {memories.map((_, index) => (
-          <View key={index} style={[styles.paginationDot, index === activeIndex ? styles.paginationDotActive : null]} />
+          <View
+            key={index}
+            style={[
+              styles.paginationDot,
+              index === activeIndex ? styles.paginationDotActive : null,
+            ]}
+          />
         ))}
       </View>
 
-      {/* Botón de continuar */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Countdown")}>
+      {/* Botón de continuar que activa el sonido de transición y navega */}
+      <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
         <AntDesign name="heart" size={24} color="white" style={styles.buttonIcon} />
         <Text style={styles.buttonText}>Seguir Explorando ✨</Text>
       </TouchableOpacity>
@@ -119,7 +192,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     width: width * 0.7,
-    height: height * 0.4, 
+    height: height * 0.4,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import LottieView from "lottie-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Audio } from "expo-av";
 
 const { width, height } = Dimensions.get("window");
 
@@ -22,6 +23,10 @@ const StoryScreen = ({ navigation }) => {
     y: height * 0.3,
   }).current;
 
+  // Ref para almacenar el sonido de fondo
+  const bgSoundRef = useRef(null);
+
+  // Animación de fade-in
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -30,9 +35,59 @@ const StoryScreen = ({ navigation }) => {
     }).start();
   }, [fadeAnim]);
 
+  // Reproduce el sonido de fondo en bucle y lo almacena en el ref
+  useEffect(() => {
+    async function playBackground() {
+      try {
+        const { sound } = await Audio.Sound.createAsync(
+          require("../assets/sounds/turi-ip-ip-ip.mp3"), // Asegúrate de tener este archivo en la ruta indicada
+          { shouldPlay: true, isLooping: true }
+        );
+        bgSoundRef.current = sound;
+        await sound.playAsync();
+      } catch (error) {
+        console.log("Error al reproducir el sonido de fondo:", error);
+      }
+    }
+    playBackground();
+    return () => {
+      if (bgSoundRef.current) {
+        bgSoundRef.current.stopAsync();
+        bgSoundRef.current.unloadAsync();
+      }
+    };
+  }, []);
+
   const handleSecretPress = () => {
     setShowKey(true);
     AsyncStorage.setItem("hasKey", "true");
+  };
+
+  // Función que se ejecuta al presionar el botón:
+  // Detiene el sonido de fondo, reproduce el sonido del botón y luego navega
+  const handleButtonPress = async () => {
+    try {
+      // Detener y descargar el sonido de fondo si existe
+      if (bgSoundRef.current) {
+        await bgSoundRef.current.stopAsync();
+        await bgSoundRef.current.unloadAsync();
+        bgSoundRef.current = null;
+      }
+
+      // Reproducir el sonido del botón
+      const { sound } = await Audio.Sound.createAsync(
+        require("../assets/sounds/piuw.mp3") // Asegúrate de tener este archivo
+      );
+      await sound.playAsync();
+      // Espera 500ms para que se escuche el efecto y luego navega
+      setTimeout(() => {
+        sound.unloadAsync();
+        navigation.navigate("Memories");
+      }, 500);
+    } catch (error) {
+      console.log("Error al reproducir el sonido del botón:", error);
+      navigation.navigate("Memories");
+    }
   };
 
   return (
@@ -54,12 +109,6 @@ const StoryScreen = ({ navigation }) => {
           algo que no existe en ningún otro lugar del mundo… 
           porque nació de mi amor por ti &lt;3.
         </Text>
-
-        {/* <Text style={styles.text}>
-          Todo lo que ves aquí salió de mi mente, diseñado solo para ti. Esta no
-          es solo una historia… es un tesoro, una puerta a los recuerdos que
-          construiremos juntos. ¿Te atreves a descubrirlo?
-        </Text> */}
 
         {/* Botón secreto para revelar la llave */}
         <TouchableOpacity
@@ -88,9 +137,9 @@ const StoryScreen = ({ navigation }) => {
           </Animated.View>
         )}
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("Memories")}>
+        {/* Botón principal que, al presionarse, detiene el sonido de fondo,
+            reproduce un sonido y luego navega */}
+        <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
           <Text style={styles.buttonText}>Descubre más...</Text>
         </TouchableOpacity>
       </Animated.View>

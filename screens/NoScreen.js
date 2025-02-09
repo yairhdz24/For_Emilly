@@ -1,34 +1,83 @@
-"use client"
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView } from "react-native"
-import { AntDesign } from "@expo/vector-icons"
-import { LinearGradient } from "expo-linear-gradient"
+"use client";
+import React, { useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  Image,
+  SafeAreaView,
+} from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { Audio } from "expo-av";
 
-const { width, height } = Dimensions.get("window")
+const { width, height } = Dimensions.get("window");
 
 const NoScreen = ({ navigation }) => {
+  useEffect(() => {
+    let soundObject;
+
+    // Función para cargar y reproducir el sonido
+    async function playSound() {
+      try {
+        const { sound } = await Audio.Sound.createAsync(
+          require("../assets/sounds/miau-triste.mp3")
+        );
+        soundObject = sound;
+        await sound.playAsync();
+      } catch (error) {
+        console.log("Error al reproducir el sonido:", error);
+      }
+    }
+
+    playSound();
+
+    // Cuando se desmonte el componente, detiene y descarga el sonido
+    return () => {
+      if (soundObject) {
+        soundObject.stopAsync();    // Detiene la reproducción inmediatamente
+        soundObject.unloadAsync();  // Libera el recurso del sonido
+      }
+    };
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={["#1a1a1a", "#4a1a2b"]} style={styles.background} />
       <View style={styles.content}>
-        <Image source={require("../assets/images/sad.png")} style={styles.image} resizeMode="contain" />
+        <Image
+          source={require("../assets/images/sad.png")}
+          style={styles.image}
+          resizeMode="contain"
+        />
         <View style={styles.textContainer}>
           <Text style={styles.text}>¿Estás segura de tu respuesta?</Text>
           <Text style={styles.subText}>Piénsalo bien...</Text>
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("AreYouSure")}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("AreYouSure")}
+          >
             <AntDesign name="check" size={24} color="white" />
             <Text style={styles.buttonText}>Sí, estoy segura</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.returnButton} onPress={() => navigation.navigate("Question")}>
+          <TouchableOpacity
+            style={styles.returnButton}
+            onPress={() => navigation.navigate("Question")}
+          >
             <AntDesign name="back" size={24} color="#FF69B4" />
-            <Text style={styles.returnButtonText}>Mejor lo pienso de nuevo</Text>
+            <Text style={styles.returnButtonText}>
+              Mejor lo pienso de nuevo
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -119,7 +168,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     marginLeft: 10,
   },
-})
+});
 
-export default NoScreen
-
+export default NoScreen;

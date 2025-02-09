@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react"
 import { View, Text, StyleSheet, Animated, TouchableOpacity, Dimensions } from "react-native"
 import LottieView from "lottie-react-native"
 import { useFonts } from "expo-font"
+import { Audio } from "expo-av"
 
 const { width, height } = Dimensions.get("window")
 
@@ -36,6 +37,26 @@ const WelcomeScreen = ({ navigation }) => {
     return null
   }
 
+  // Función que se ejecuta al presionar el botón
+  const handlePress = async () => {
+    try {
+      // Crea el objeto de sonido y reprodúcelo
+      const { sound } = await Audio.Sound.createAsync(
+        require("../assets/sounds/piuw.mp3")
+      )
+      await sound.playAsync()
+
+      // Opcional: descarga el recurso después de 1 segundo (ajusta según la duración del sonido)
+      setTimeout(() => {
+        sound.unloadAsync()
+      }, 1000)
+    } catch (error) {
+      console.log("Error al reproducir el sonido:", error)
+    }
+    // Navega a la pantalla "Story" después de reproducir el sonido
+    navigation.navigate("Story")
+  }
+
   return (
     <View style={styles.container}>
       <Animated.View
@@ -56,12 +77,17 @@ const WelcomeScreen = ({ navigation }) => {
         />
         <Text style={styles.title}>Hola, mi amor</Text>
         <Text style={styles.subtitle}>Bienvenida a un viaje muy especial...</Text>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Story")}>
-          {/* <LottieView source={require("../assets/button-bg.json")} autoPlay loop style={styles.buttonAnimation} /> */}
+        {/* Botón que reproduce el sonido al presionarlo y luego navega */}
+        <TouchableOpacity style={styles.button} onPress={handlePress}>
           <Text style={styles.buttonText}>Comenzar</Text>
         </TouchableOpacity>
       </Animated.View>
-      <LottieView source={require("../assets/corazones-celebracion.json")} autoPlay loop style={styles.backgroundAnimation} />
+      <LottieView
+        source={require("../assets/corazones-celebracion.json")}
+        autoPlay
+        loop
+        style={styles.backgroundAnimation}
+      />
     </View>
   )
 }
@@ -110,11 +136,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  buttonAnimation: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-  },
   buttonText: {
     color: "white",
     fontSize: 24,
@@ -129,11 +150,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 2,
     shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 3,
   },
 })
 
 export default WelcomeScreen
-

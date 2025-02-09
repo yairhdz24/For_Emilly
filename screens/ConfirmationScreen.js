@@ -35,7 +35,7 @@ const ConfirmationScreen = ({ navigation }) => {
 
         {/* Mensaje romántico */}
         <Text style={styles.messageText}>
-          Cada palabra tuya es un rayo de luz en mi universo. ✨  
+          Yo sabia que em ibas a decir que si {'>'}{'>'}//{'<'}{'<'}. ✨  
           Este es solo el inicio de una historia hermosa que seguimos escribiendo juntos💖.  
           Eres mi más grande amor, mi todo. 💫
         </Text>
