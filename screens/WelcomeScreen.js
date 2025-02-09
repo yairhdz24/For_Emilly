@@ -1,13 +1,20 @@
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react"
-import { View, Text, StyleSheet, Animated, TouchableOpacity, Dimensions } from "react-native"
-import LottieView from "lottie-react-native"
-import { useFonts } from "expo-font"
-import { Audio } from "expo-av"
-import * as Notifications from "expo-notifications"
+import { useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import LottieView from "lottie-react-native";
+import { useFonts } from "expo-font";
+import { Audio } from "expo-av";
+import * as Notifications from "expo-notifications";
 
-const { width, height } = Dimensions.get("window")
+const { width, height } = Dimensions.get("window");
 
 // Configurar el manejador de notificaciones
 Notifications.setNotificationHandler({
@@ -16,16 +23,16 @@ Notifications.setNotificationHandler({
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),
-})
+});
 
 const WelcomeScreen = ({ navigation }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current
-  const scaleAnim = useRef(new Animated.Value(0.5)).current
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.5)).current;
 
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
-  })
+  });
 
   const messages = [
     "❤️ Jdrr cada dia me enamoro mas de ti x dios.💖",
@@ -33,7 +40,7 @@ const WelcomeScreen = ({ navigation }) => {
     "🌹 El destino nos guardo el uno al otro mi amor💖.",
     "🎵 Nuestro amor es la conexion mas linda.✨",
     "💫 Quiero compartir cada instante de mi vida a tu lado 💕",
-  ]
+  ];
 
   useEffect(() => {
     Animated.parallel([
@@ -48,28 +55,28 @@ const WelcomeScreen = ({ navigation }) => {
         tension: 40,
         useNativeDriver: true,
       }),
-    ]).start()
+    ]).start();
 
-    scheduleNotifications()
-  }, [fadeAnim, scaleAnim])
+    scheduleNotifications();
+  }, [fadeAnim, scaleAnim]);
 
   const scheduleNotifications = async () => {
     try {
-      const { status } = await Notifications.requestPermissionsAsync()
+      const { status } = await Notifications.requestPermissionsAsync();
       if (status !== "granted") {
-        console.log("Permiso de notificación no otorgado")
-        return
+        console.log("Permiso de notificación no otorgado");
+        return;
       }
 
       // Cancelar todas las notificaciones programadas anteriormente
-      await Notifications.cancelAllScheduledNotificationsAsync()
+      await Notifications.cancelAllScheduledNotificationsAsync();
 
       // Programar notificaciones diarias a las 9 AM
       for (let i = 0; i < 45; i++) {
-        const message = messages[i % messages.length]
-        const trigger = new Date()
-        trigger.setDate(trigger.getDate() + i)
-        trigger.setHours(9, 0, 0, 0)
+        const message = messages[i % messages.length];
+        const trigger = new Date();
+        trigger.setDate(trigger.getDate() + i);
+        trigger.setHours(9, 0, 0, 0);
 
         await Notifications.scheduleNotificationAsync({
           content: {
@@ -77,14 +84,14 @@ const WelcomeScreen = ({ navigation }) => {
             body: message,
           },
           trigger,
-        })
+        });
       }
 
       // Notificación de prueba a las 3:40 AM
-      const testTrigger = new Date()
-      testTrigger.setHours(3, 50, 0, 0)
+      const testTrigger = new Date();
+      testTrigger.setHours(3, 50, 0, 0);
       if (testTrigger <= new Date()) {
-        testTrigger.setDate(testTrigger.getDate() + 1)
+        testTrigger.setDate(testTrigger.getDate() + 1);
       }
 
       await Notifications.scheduleNotificationAsync({
@@ -93,31 +100,33 @@ const WelcomeScreen = ({ navigation }) => {
           body: "🎵 Nuestro amor es la conexion mas linda.",
         },
         trigger: testTrigger,
-      })
+      });
 
-      console.log("Notificaciones programadas con éxito")
+      console.log("Notificaciones programadas con éxito");
     } catch (error) {
-      console.error("Error al programar notificaciones:", error)
+      console.error("Error al programar notificaciones:", error);
     }
-  }
+  };
 
   if (!fontsLoaded) {
-    return null
+    return null;
   }
 
   const handlePress = async () => {
     try {
-      const { sound } = await Audio.Sound.createAsync(require("../assets/sounds/piuw.mp3"))
-      await sound.playAsync()
+      const { sound } = await Audio.Sound.createAsync(
+        require("../assets/sounds/piuw.mp3")
+      );
+      await sound.playAsync();
 
       setTimeout(() => {
-        sound.unloadAsync()
-      }, 1000)
+        sound.unloadAsync();
+      }, 1000);
     } catch (error) {
-      console.log("Error al reproducir el sonido:", error)
+      console.log("Error al reproducir el sonido:", error);
     }
-    navigation.navigate("Story")
-  }
+    navigation.navigate("Story");
+  };
 
   return (
     <View style={styles.container}>
@@ -128,8 +137,7 @@ const WelcomeScreen = ({ navigation }) => {
             opacity: fadeAnim,
             transform: [{ scale: scaleAnim }],
           },
-        ]}
-      >
+        ]}>
         <LottieView
           source={require("../assets/welcome.json")}
           autoPlay
@@ -138,11 +146,16 @@ const WelcomeScreen = ({ navigation }) => {
           resizeMode="cover"
         />
         <Text style={styles.title}>Hola, mi amor</Text>
-        <Text style={styles.subtitle}>Bienvenida a un viaje muy especial...</Text>
+        <Text style={styles.subtitle}>
+          Bienvenida a un viaje muy especial...
+        </Text>
         <TouchableOpacity style={styles.button} onPress={handlePress}>
           <Text style={styles.buttonText}>Comenzar</Text>
         </TouchableOpacity>
       </Animated.View>
+      <TouchableOpacity
+        style={styles.secretbutton}
+        onPress={() => navigation.navigate("Gift")}></TouchableOpacity>
       <LottieView
         source={require("../assets/corazones-celebracion.json")}
         autoPlay
@@ -150,8 +163,8 @@ const WelcomeScreen = ({ navigation }) => {
         style={styles.backgroundAnimation}
       />
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -192,6 +205,16 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     paddingHorizontal: 20,
   },
+  secretbutton: {
+    width: 30,
+    height: 40,
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    // backgroundColor: "#FF1493",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+  },
   button: {
     position: "relative",
     width: 200,
@@ -216,7 +239,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 3,
   },
-})
+});
 
-export default WelcomeScreen
-
+export default WelcomeScreen;

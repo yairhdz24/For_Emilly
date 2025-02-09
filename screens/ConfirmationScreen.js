@@ -96,7 +96,7 @@ const ConfirmationScreen = ({ navigation }) => {
 
         {/* Mensaje romántico */}
         <Text style={styles.messageText}>
-          Yo sabía que me ibas a decir que sí {'>'}{'>'}//{'<'}{'<'}. ✨  
+          Yo sabía que me ibas a decir que sí {'>'}//{'<'}. ✨  
           Este es solo el inicio de una historia hermosa que seguimos escribiendo juntos 💖.  
           Eres mi más grande amor, mi todo, Te Amoo!!💖💖💫
         </Text>
