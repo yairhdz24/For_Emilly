@@ -9,10 +9,10 @@ const CountdownScreen = ({ navigation }) => {
   const [message, setMessage] = useState("")
 
   useEffect(() => {
-    const valentinesDay = new Date("2024-02-14T00:00:00")
+    const valentinesDay = new Date("2025-02-14T00:00:00")
     const today = new Date()
     const timeDiff = valentinesDay.getTime() - today.getTime()
-    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24))
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24))
     setDaysLeft(daysDiff)
 
     // Aquí puedes definir tus mensajes diarios

@@ -1,47 +1,65 @@
-"use client"
+"use client";
 
-import { useEffect, useRef, useState } from "react"
-import { View, Text, StyleSheet, Animated, TouchableOpacity, Dimensions } from "react-native"
-import LottieView from "lottie-react-native"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useEffect, useRef, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import LottieView from "lottie-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width, height } = Dimensions.get("window")
+const { width, height } = Dimensions.get("window");
 
 const StoryScreen = ({ navigation }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current
-  const [showKey, setShowKey] = useState(false)
-  const secretButtonPosition = useRef({ x: width * 0.1, y: height * 0.3 }).current
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [showKey, setShowKey] = useState(false);
+  const secretButtonPosition = useRef({
+    x: width * 0.1,
+    y: height * 0.3,
+  }).current;
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 2000,
       useNativeDriver: true,
-    }).start()
-  }, [fadeAnim])
+    }).start();
+  }, [fadeAnim]);
 
   const handleSecretPress = () => {
-    setShowKey(true)
-    AsyncStorage.setItem("hasKey", "true")
-  }
+    setShowKey(true);
+    AsyncStorage.setItem("hasKey", "true");
+  };
 
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
-        <LottieView source={require("../assets/hacker1.json")} autoPlay loop style={styles.animation} />
+        <LottieView
+          source={require("../assets/hacker1.json")}
+          autoPlay
+          loop
+          style={styles.animation}
+        />
 
-        <Text style={styles.title}>Un mensaje secreto para ti...</Text>
+        <Text style={styles.title}>Un mensaje especial solo para ti...</Text>
 
         <Text style={styles.text}>
-          En el silencio de la noche, cuando todos dormían, yo soñaba despierto. 
-          Entre líneas de código y suspiros, construí un rincón donde solo tú y yo existimos.
-          Cada detalle, cada píxel, lleva impreso el amor con el que fue creado. 
+          Durante 5 noches sin dormir, mi mente no dejó de imaginar. 
+          Cada línea de código, cada detalle, fue pensado exclusivamente para ti. 
+          No es solo una aplicación, es un pedazo de mi corazón convertido en algo único, 
+          algo que no existe en ningún otro lugar del mundo… 
+          porque nació de mi amor por ti &lt;3.
         </Text>
 
-        <Text style={styles.text}>
-          No es solo una historia... es una llave. Un portal hacia nuestros recuerdos más valiosos. 
-          ¿Podrás encontrarla?
-        </Text>
+        {/* <Text style={styles.text}>
+          Todo lo que ves aquí salió de mi mente, diseñado solo para ti. Esta no
+          es solo una historia… es un tesoro, una puerta a los recuerdos que
+          construiremos juntos. ¿Te atreves a descubrirlo?
+        </Text> */}
 
         {/* Botón secreto para revelar la llave */}
         <TouchableOpacity
@@ -58,18 +76,27 @@ const StoryScreen = ({ navigation }) => {
 
         {showKey && (
           <Animated.View style={styles.keyContainer}>
-            <LottieView source={require("../assets/key.json")} autoPlay loop={false} style={styles.keyAnimation} />
-            <Text style={styles.keyText}>¡Has encontrado la llave del tesoro! ✨</Text>
+            <LottieView
+              source={require("../assets/key.json")}
+              autoPlay
+              loop={false}
+              style={styles.keyAnimation}
+            />
+            <Text style={styles.keyText}>
+              ¡Has encontrado la llave del tesoro! ✨
+            </Text>
           </Animated.View>
         )}
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Memories")}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("Memories")}>
           <Text style={styles.buttonText}>Descubre más...</Text>
         </TouchableOpacity>
       </Animated.View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -150,6 +177,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
   },
-})
+});
 
-export default StoryScreen
+export default StoryScreen;

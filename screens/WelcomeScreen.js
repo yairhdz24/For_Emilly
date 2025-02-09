@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     color: "#FF1493",
     marginBottom: 10,
     textShadow: "0px 0px 10px rgba(255,20,147,0.5)",
+    zIndex: 1000,
   },
   subtitle: {
     fontSize: 24,
@@ -119,6 +120,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: "Poppins-Bold",
     zIndex: 1,
+    textShadowColor: "#FFD700",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 10,
+    backgroundColor: "rgba(255, 9, 181, 0.1)",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+    elevation: 2,
+    shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
   },
 })
 
