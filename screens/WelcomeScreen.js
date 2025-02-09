@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     height: 70,
     justifyContent: "flex-end",
     alignItems: "flex-end",
-    // backgroundColor: "#FF1493",
+    // backgroundColor: "#FF1493", // Para visualizar el botón secreto
     position: "absolute",
     bottom: 30,
     left: 50,
