@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import LottieView from "lottie-react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { BlurView } from "expo-blur";
 
 const { width } = Dimensions.get("window");
 
@@ -50,7 +49,8 @@ const GiftScreen = () => {
 
   return (
     <LinearGradient colors={["#FF69B4", "#FF1493"]} style={styles.container}>
-      <BlurView intensity={20} style={styles.blurContainer}>
+      {/* Reemplazamos BlurView por un simple View con estilo semitransparente */}
+      <View style={styles.overlayContainer}>
         <Animated.View
           style={[
             styles.content,
@@ -93,7 +93,7 @@ const GiftScreen = () => {
             <Text style={styles.buttonText}>Acepto tu compromiso 💍</Text>
           </TouchableOpacity>
         </Animated.View>
-      </BlurView>
+      </View>
     </LinearGradient>
   );
 };
@@ -102,11 +102,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  blurContainer: {
+  // Nuevo estilo para sustituir el BlurView
+  overlayContainer: {
     flex: 1,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    // Fondo semitransparente para dar sensación de overlay
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   content: {
     padding: 20,
